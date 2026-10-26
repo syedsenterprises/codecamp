@@ -1,0 +1,54 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CodeCamp — Learn Programming by Building</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0f1220;color:#e2e8f0;font-family:'Space Grotesk',sans-serif}
+header{max-width:1080px;margin:0 auto;padding:18px 22px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:22px}.logo span{color:#4ade80}
+.btn{background:#4ade80;color:#0f1220;border:0;padding:11px 20px;border-radius:10px;font-weight:700;cursor:pointer}
+.hero{max-width:1080px;margin:0 auto;padding:30px 22px;display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+.hero h1{font-size:46px;line-height:1.05;margin:0 0 12px}.hero p{color:#94a3b8;font-size:17px}
+.term{background:#0a0d1a;border:1px solid #232a45;border-radius:14px;padding:18px;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.7;min-height:200px}
+.term .g{color:#4ade80}.term .b{color:#60a5fa}.term .y{color:#facc15}.term .m{color:#94a3b8}
+.tracks{max-width:1080px;margin:0 auto;padding:0 22px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.t{background:#171a30;border:1px solid #232a45;border-radius:14px;padding:18px;cursor:pointer}
+.t.on{border-color:#4ade80}
+.t b{font-size:18px}.t p{color:#94a3b8;font-size:13px}
+.courses{max-width:1080px;margin:0 auto;padding:20px 22px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.c{background:#171a30;border:1px solid #232a45;border-radius:14px;padding:20px}
+.c .lvl{font-family:'JetBrains Mono',monospace;font-size:12px;color:#4ade80}
+.c p{color:#94a3b8;font-size:14px}
+.prog{height:8px;background:#0f1220;border-radius:99px;margin:12px 0;overflow:hidden}.prog i{display:block;height:100%;background:#4ade80}
+.done{border-color:#4ade80 !important}
+.acc{max-width:1080px;margin:0 auto;padding:0 22px}
+.acc button{width:100%;text-align:left;background:#171a30;color:#fff;border:1px solid #232a45;padding:14px 18px;border-radius:10px;margin:6px 0;cursor:pointer;font-size:15px}
+.acc div{display:none;padding:12px 18px;color:#94a3b8}
+.progress{max-width:1080px;margin:0 auto;padding:0 22px}
+footer{text-align:center;color:#64748b;padding:24px;font-size:13px}
+@media(max-width:700px){.hero,.tracks,.courses{grid-template-columns:1fr}.hero h1{font-size:34px}}
+</style></head><body>
+<header><div class="logo">&lt;Code<span>Camp</span>/&gt;</div><button class="btn" onclick="document.querySelector('.courses').scrollIntoView()">Start free</button></header>
+<section class="hero"><div><h1>Learn to code by building real things.</h1><p>No 40-hour video marathons. Short lessons, real projects, and a portfolio at the end. Your progress below is saved in this browser — tick lessons off and watch it move.</p></div>
+<div class="term"><span class="m">$ whoami</span><br/><span class="g">→ future developer</span><br/><span class="m">$ codecamp start</span><br/><span class="b">✔ Lesson 1:</span> <span class="y" id="type"></span><span class="m">▌</span><br/><span class="m"># 12,400 learners building this week</span></div></section>
+<section class="tracks" id="tracks"></section>
+<div class="progress"><p>Your overall progress: <b id="pct">0%</b></p><div class="prog" style="height:12px"><i id="bar" style="width:0%"></i></div></div>
+<section class="courses" id="courses"></section>
+<div class="acc">
+<button onclick="tog(this)">▸ Do I need experience? +</button><div>No. Every track starts from zero and assumes nothing.</div>
+<button onclick="tog(this)">▸ Will I get a certificate? +</button><div>Yes — one per completed track, plus a portfolio of projects.</div>
+<button onclick="tog(this)">▸ Can I cancel anytime? +</button><div>Yes, in two clicks, and you keep access until the month ends.</div>
+</div>
+<footer>CodeCamp demo theme · Progress is stored locally in your browser. Connect accounts + a course backend for real enrolment.</footer>
+<script>
+const T={web:{label:'Web Dev',courses:[['HTML & CSS Foundations','BEGINNER',24],['JavaScript in Depth','INTERMEDIATE',31],['React & Next.js','ADVANCED',28]]},py:{label:'Python',courses:[['Python Basics','BEGINNER',20],['Automation & APIs','INTERMEDIATE',26],['Data with Pandas','ADVANCED',22]]},app:{label:'App Dev',courses:[['Flutter Foundations','BEGINNER',22],['State & Navigation','INTERMEDIATE',24],['Ship to the Stores','ADVANCED',18]]},ai:{label:'AI & ML',courses:[['Python for AI','BEGINNER',20],['Machine Learning Basics','INTERMEDIATE',30],['Build with LLMs','ADVANCED',24]]}};
+let cur='web',done=JSON.parse(localStorage.getItem('cc_done')||'[]');
+function save(){localStorage.setItem('cc_done',JSON.stringify(done));progress()}
+function progress(){let total=0,fin=0;for(let k in T)for(let c of T[k].courses){total++;if(done.includes(k+'-'+c[0]))fin++}let p=Math.round(fin/total*100);document.getElementById('pct').textContent=p+'%';document.getElementById('bar').style.width=p+'%'}
+function tracks(){document.getElementById('tracks').innerHTML=Object.keys(T).map(k=>`<div class="t ${k===cur?'on':''}" onclick="cur='${k}';tracks();courses()"><b>${T[k].label}</b><p>${T[k].courses.length} courses</p></div>`).join('')}
+function courses(){document.getElementById('courses').innerHTML=T[cur].courses.map(c=>{let id=cur+'-'+c[0],d=done.includes(id);return `<div class="c ${d?'done':''}"><span class="lvl">${c[1]} · ${c[2]} LESSONS</span><h3>${c[0]}</h3><p>${d?'Completed ✓ — nice work.':'Build real projects in this course.'}</p><div class="prog"><i style="width:${d?'100%':'12%'}"></i></div><button class="btn" style="width:100%" onclick="toggleDone('${id}')">${d?'Mark incomplete':'Mark complete ✓'}</button></div>`}).join('')}
+function toggleDone(id){let i=done.indexOf(id);if(i>=0)done.splice(i,1);else done.push(id);save();courses()}
+function tog(b){let d=b.nextElementSibling;d.style.display=d.style.display==='block'?'none':'block'}
+let words=['"Hello, world!"','your first website','a working app','real skills'];let wi=0,ci=0;
+(function typ(){let w=words[wi];document.getElementById('type').textContent=w.slice(0,ci++);if(ci>w.length){ci=0;wi=(wi+1)%words.length;setTimeout(typ,1600)}else setTimeout(typ,70)})();
+tracks();courses();progress();
+</script></body></html>
